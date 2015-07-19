@@ -1,0 +1,2 @@
+# SolidoColorWallpaper
+app wallpaper
