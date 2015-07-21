@@ -1,13 +1,17 @@
 package com.mago.solidcolorwallpaper;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import java.io.File;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
@@ -17,6 +21,7 @@ public class Wallpaper extends ActionBarActivity {
     private Button btnDefine;
     private Button btnSelecciona;
     private LinearLayout myLayout;
+    private int color = 000000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +43,8 @@ public class Wallpaper extends ActionBarActivity {
                 seleccionarColor(v);
             }
         });
+
+        dirExists("/SolidColorWallpaper/");
     }
 
     @Override
@@ -63,14 +70,13 @@ public class Wallpaper extends ActionBarActivity {
     }
 
     public void seleccionarColor(View view){
-        AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, 000000, new AmbilWarnaDialog.OnAmbilWarnaListener(){
+        AmbilWarnaDialog dialog = new AmbilWarnaDialog(this, color, new AmbilWarnaDialog.OnAmbilWarnaListener(){
             @Override
             public void onOk(AmbilWarnaDialog ambilWarnaDialog, int i) {
-                String color = "Color escogido: "+i;
-                Toast toast = Toast.makeText(getApplicationContext(), color, Toast.LENGTH_LONG);
-                toast.show();
                 myLayout =(LinearLayout)findViewById(R.id.wallpaperLayout);
                 myLayout.setBackgroundColor(i);
+                hacerImagen(i);
+                color = i;
             }
 
             @Override
@@ -80,5 +86,22 @@ public class Wallpaper extends ActionBarActivity {
             }
         });
         dialog.show();
+    }
+
+    public void hacerImagen(int color){
+        CrearImagen img = new CrearImagen();
+        img.createBitmap(color);
+    }
+
+    public boolean dirExists(String path){
+        boolean ret = true;
+        File file = new File(Environment.getExternalStorageDirectory(), path);
+        if(!file.exists()){
+            if(!file.mkdirs()){
+                Log.e(TAG, "Directorio no creado");
+                ret = false;
+            }
+        }
+        return ret;
     }
 }
